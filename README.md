@@ -6,8 +6,6 @@ A smart contract wallet implementation on TON blockchain with Account Abstractio
 
 - **Session Keys**: Temporary keys with spending limits and expiration times
 - **Gas Sponsorship**: Allow third parties to pay for transaction fees
-- **Multi-signature**: Execute transactions with different validation methods
-- **Owner Control**: Full control by the wallet owner
 - **Sequence Protection**: Replay attack protection with sequence numbers
 
 ## Quick Start
@@ -93,13 +91,6 @@ Sponsor gas for transactions:
     amount: bigint
 }
 ```
-
-## Features
-
-- **Sequence Numbers**: Prevents replay attacks
-- **Spending Limits**: Session keys have configurable spending limits
-- **Time Expiration**: Session keys automatically expire
-- **Gas Sponsorship**: Controlled gas payment by sponsors
 
 ## Resources
 
