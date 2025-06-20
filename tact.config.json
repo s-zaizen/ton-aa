@@ -1,0 +1,19 @@
+{
+    "projects": [
+        {
+            "name": "aa_wallet",
+            "path": "./sources/aa_wallet.tact",
+            "output": "./sources/output",
+            "mode": "full",
+            "options": {
+                "external": false,
+                "debug": true,
+                "ipfsAbiGetter": false,
+                "interfacesGetter": false,
+                "experimental": {
+                    "inline": false
+                }
+            }
+        }
+    ]
+}
