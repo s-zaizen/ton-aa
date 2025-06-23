@@ -118,13 +118,31 @@ contract AAWallet with Deployable, Ownable {
     inline fun validateAndExecuteWithSessionKey(msg: ExecuteTransaction, ctx: Context) {
         require(msg.sessionKeySignature != null, "Session key signature required");
         
-        let sessionKeyPubKey: Int = msg.sessionKeySignature!!.loadUint(256);
+        let signature: Slice = msg.sessionKeySignature!!;
+        require(signature.bits() >= 768, "Invalid signature format");
+        let sessionKeyPubKey: Int = signature.loadUint(256);
+        let r: Int = signature.loadUint(256);
+        let s: Int = signature.loadUint(256);
         
         let sessionKey: SessionKey? = self.sessionKeys.get(sessionKeyPubKey);
         require(sessionKey != null, "Session key not found");
         
         require(now() <= sessionKey!!.validUntil, "Session key expired");
         require(sessionKey!!.spent + msg.value <= sessionKey!!.spendingLimit, "Spending limit exceeded");
+        
+        let bodyCell: Cell = msg.body != null ? msg.body!! : emptyCell();
+        let msgCell: Cell = beginCell()
+            .storeUint(msg.seqno, 32)
+            .storeUint(msg.mode, 8)
+            .storeAddress(msg.to)
+            .storeCoins(msg.value)
+            .storeRef(bodyCell)
+            .endCell();
+        
+        let msgHash: Int = msgCell.hash();
+        
+        let isValid: Bool = checkSignature(msgHash, beginCell().storeUint(r, 256).storeUint(s, 256).endCell().beginParse(), sessionKeyPubKey);
+        require(isValid, "Invalid session key signature");
         
         self.sessionKeys.set(sessionKeyPubKey, SessionKey{
             publicKey: sessionKey!!.publicKey,
